@@ -1,24 +1,333 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 import Head from "next/head";
-import { subDays, subHours } from "date-fns";
-import ArrowDownOnSquareIcon from "@heroicons/react/24/solid/ArrowDownOnSquareIcon";
-import ArrowUpOnSquareIcon from "@heroicons/react/24/solid/ArrowUpOnSquareIcon";
-import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
-import { Box, Button, Container, Stack, SvgIcon, Typography } from "@mui/material";
-import { useSelection } from "src/hooks/use-selection";
+import {
+  Box,
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  CardHeader,
+  Divider,
+  TextField,
+  Unstable_Grid2 as Grid,
+} from "@mui/material";
 import { Layout as DashboardLayout } from "src/layouts/dashboard/layout";
-import { CustomersTable } from "src/sections/customer/customers-table";
-import { CustomersSearch } from "src/sections/customer/customers-search";
-import { applyPagination } from "src/utils/apply-pagination";
 
-const now = new Date();
+const states = [
+  {
+    value: "alabama",
+    label: "Alabama",
+  },
+  {
+    value: "new-york",
+    label: "New York",
+  },
+  {
+    value: "san-francisco",
+    label: "San Francisco",
+  },
+  {
+    value: "los-angeles",
+    label: "Los Angeles",
+  },
+];
 
 const Page = () => {
+  const [values, setValues] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    state: "",
+    country: "",
+  });
+
+  const handleChange = useCallback((event) => {
+    setValues((prevState) => ({
+      ...prevState,
+      [event.target.name]: event.target.value,
+    }));
+  }, []);
+
+  const handleSubmit = useCallback((event) => {
+    event.preventDefault();
+  }, []);
   return (
     <>
       <Head>
         <title>Application Profile</title>
       </Head>
+      <form autoComplete="off" noValidate onSubmit={handleSubmit}>
+        <Card>
+          <CardHeader subheader="Create new application profile" title="Application Profile" />
+        </Card>
+        <Card>
+          <CardHeader subheader="Create new application profile" title="Application Profile" />
+          <CardContent sx={{ pt: 0 }}>
+            <Box sx={{ m: -1.5 }}>
+              <Grid container spacing={3}>
+                <Grid xs={12} md={6}>
+                  <TextField
+                    fullWidth
+                    helperText="Please specify the first name"
+                    label="First name"
+                    name="firstName"
+                    onChange={handleChange}
+                    required
+                    value={values.firstName}
+                  />
+                </Grid>
+                <Grid xs={12} md={6}>
+                  <TextField
+                    fullWidth
+                    label="Last name"
+                    name="lastName"
+                    onChange={handleChange}
+                    required
+                    value={values.lastName}
+                  />
+                </Grid>
+                <Grid xs={12} md={6}>
+                  <TextField
+                    fullWidth
+                    label="Email Address"
+                    name="email"
+                    onChange={handleChange}
+                    required
+                    value={values.email}
+                  />
+                </Grid>
+              </Grid>
+            </Box>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader subheader="Create new application profile" title="Application Profile" />
+          <CardContent sx={{ pt: 0 }}>
+            <Box sx={{ m: -1.5 }}>
+              <Grid container spacing={3}>
+                <Grid xs={12} md={6}>
+                  <TextField
+                    fullWidth
+                    label="Phone Number"
+                    name="phone"
+                    onChange={handleChange}
+                    type="number"
+                    value={values.phone}
+                  />
+                </Grid>
+                <Grid xs={12} md={6}>
+                  <TextField
+                    fullWidth
+                    label="Country"
+                    name="country"
+                    onChange={handleChange}
+                    required
+                    value={values.country}
+                  />
+                </Grid>
+                <Grid xs={12} md={6}>
+                  <TextField
+                    fullWidth
+                    label="Select State"
+                    name="state"
+                    onChange={handleChange}
+                    required
+                    select
+                    SelectProps={{ native: true }}
+                    value={values.state}
+                  >
+                    {states.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </TextField>
+                </Grid>
+              </Grid>
+            </Box>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader subheader="Create new application profile" title="Application Profile" />
+          <CardContent sx={{ pt: 0 }}>
+            <Box sx={{ m: -1.5 }}>
+              <Grid container spacing={3}>
+                <Grid xs={12} md={6}>
+                  <TextField
+                    fullWidth
+                    helperText="Please specify the first name"
+                    label="First name"
+                    name="firstName"
+                    onChange={handleChange}
+                    required
+                    value={values.firstName}
+                  />
+                </Grid>
+                <Grid xs={12} md={6}>
+                  <TextField
+                    fullWidth
+                    label="Last name"
+                    name="lastName"
+                    onChange={handleChange}
+                    required
+                    value={values.lastName}
+                  />
+                </Grid>
+                <Grid xs={12} md={6}>
+                  <TextField
+                    fullWidth
+                    label="Email Address"
+                    name="email"
+                    onChange={handleChange}
+                    required
+                    value={values.email}
+                  />
+                </Grid>
+              </Grid>
+            </Box>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader subheader="Create new application profile" title="Application Profile" />
+          <CardContent sx={{ pt: 0 }}>
+            <Box sx={{ m: -1.5 }}>
+              <Grid container spacing={3}>
+                <Grid xs={12} md={6}>
+                  <TextField
+                    fullWidth
+                    label="Phone Number"
+                    name="phone"
+                    onChange={handleChange}
+                    type="number"
+                    value={values.phone}
+                  />
+                </Grid>
+                <Grid xs={12} md={6}>
+                  <TextField
+                    fullWidth
+                    label="Country"
+                    name="country"
+                    onChange={handleChange}
+                    required
+                    value={values.country}
+                  />
+                </Grid>
+                <Grid xs={12} md={6}>
+                  <TextField
+                    fullWidth
+                    label="Select State"
+                    name="state"
+                    onChange={handleChange}
+                    required
+                    select
+                    SelectProps={{ native: true }}
+                    value={values.state}
+                  >
+                    {states.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </TextField>
+                </Grid>
+              </Grid>
+            </Box>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader subheader="Create new application profile" title="Application Profile" />
+          <CardContent sx={{ pt: 0 }}>
+            <Box sx={{ m: -1.5 }}>
+              <Grid container spacing={3}>
+                <Grid xs={12} md={6}>
+                  <TextField
+                    fullWidth
+                    helperText="Please specify the first name"
+                    label="First name"
+                    name="firstName"
+                    onChange={handleChange}
+                    required
+                    value={values.firstName}
+                  />
+                </Grid>
+                <Grid xs={12} md={6}>
+                  <TextField
+                    fullWidth
+                    label="Last name"
+                    name="lastName"
+                    onChange={handleChange}
+                    required
+                    value={values.lastName}
+                  />
+                </Grid>
+                <Grid xs={12} md={6}>
+                  <TextField
+                    fullWidth
+                    label="Email Address"
+                    name="email"
+                    onChange={handleChange}
+                    required
+                    value={values.email}
+                  />
+                </Grid>
+              </Grid>
+            </Box>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader subheader="Create new application profile" title="Application Profile" />
+          <CardContent sx={{ pt: 0 }}>
+            <Box sx={{ m: -1.5 }}>
+              <Grid container spacing={3}>
+                <Grid xs={12} md={6}>
+                  <TextField
+                    fullWidth
+                    label="Phone Number"
+                    name="phone"
+                    onChange={handleChange}
+                    type="number"
+                    value={values.phone}
+                  />
+                </Grid>
+                <Grid xs={12} md={6}>
+                  <TextField
+                    fullWidth
+                    label="Country"
+                    name="country"
+                    onChange={handleChange}
+                    required
+                    value={values.country}
+                  />
+                </Grid>
+                <Grid xs={12} md={6}>
+                  <TextField
+                    fullWidth
+                    label="Select State"
+                    name="state"
+                    onChange={handleChange}
+                    required
+                    select
+                    SelectProps={{ native: true }}
+                    value={values.state}
+                  >
+                    {states.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </TextField>
+                </Grid>
+              </Grid>
+            </Box>
+          </CardContent>
+        </Card>
+
+        <Divider />
+        <CardActions sx={{ justifyContent: "flex-end" }}>
+          <Button variant="contained">Save details</Button>
+        </CardActions>
+      </form>
     </>
   );
 };

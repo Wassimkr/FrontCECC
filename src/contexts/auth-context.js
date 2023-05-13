@@ -1,5 +1,7 @@
 import { createContext, useContext, useEffect, useReducer, useRef } from "react";
+import { useRouter } from "next/router";
 import PropTypes from "prop-types";
+import axios from "axios";
 
 const HANDLERS = {
   INITIALIZE: "INITIALIZE",
@@ -59,6 +61,7 @@ export const AuthContext = createContext({ undefined });
 export const AuthProvider = (props) => {
   const { children } = props;
   const [state, dispatch] = useReducer(reducer, initialState);
+  const router = useRouter();
   const initialized = useRef(false);
 
   const initialize = async () => {
@@ -125,31 +128,38 @@ export const AuthProvider = (props) => {
   };
 
   const signIn = async (email, password) => {
-    if (email !== "hw_kribaa@esi.dz" || password !== "Password123!") {
+    try {
+      const response = await axios.post("/api/auth/login", {
+        email,
+        password,
+      });
+      if (response.data) {
+        window.sessionStorage.setItem("authenticated", "true");
+        dispatch({
+          type: HANDLERS.SIGN_IN,
+          payload: response.data,
+        });
+      }
+    } catch {
       throw new Error("Please check your email and password");
     }
-
-    try {
-      window.sessionStorage.setItem("authenticated", "true");
-    } catch (err) {
-      console.error(err);
-    }
-
-    const user = {
-      id: "5e86809283e28b96d2d38537",
-      avatar: "/assets/avatars/avatar-anika-visser.png",
-      name: "Anika Visser",
-      email: "anika.visser@devias.io",
-    };
-
-    dispatch({
-      type: HANDLERS.SIGN_IN,
-      payload: user,
-    });
   };
 
   const signUp = async (email, name, password) => {
-    throw new Error("Sign up is not implemented");
+    try {
+      const response = await axios.post("/api/auth/register", {
+        email,
+        name,
+        password,
+      });
+      if (response.data) {
+        router.replace({
+          pathname: "/auth/login",
+        });
+      }
+    } catch {
+      throw new Error("Error while trying to signup");
+    }
   };
 
   const signOut = () => {

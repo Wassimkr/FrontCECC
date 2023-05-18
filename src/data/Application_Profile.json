@@ -1,0 +1,95 @@
+{
+  "Application Consumers": [
+    {
+      "Profile Type": "",
+      "Characteristics": "",
+      "Interfaces Experiences": [
+        {
+          "Interface Type": "",
+          "Endpoint": ""
+        }
+      ],
+      "Consumer Specific Functionality": "",
+      "Authentication And Authorization": {
+        "Method": "",
+        "Permissions": ""
+      }
+    }
+  ],
+  "Microservices": [
+    {
+      "Name": "",
+      "Purpose": "",
+      "Functionality": "",
+      "API Endpoints": [
+        {
+          "Endpoint": "",
+          "Purpose": "",
+          "Method": ""
+        }
+      ],
+      "Dependencies": [
+        {
+          "ServiceName": "",
+          "Purpose": ""
+        }
+      ],
+      "Resource Requirements": {
+        "CPU": "",
+        "Memory": "",
+        "Storage": ""
+      },
+      "Operational Aspects": {
+        "Monitoring": "",
+        "Logging": "",
+        "Deployment Scaling Instructions": ""
+      }
+    }
+  ],
+  "DataSources": [
+    {
+      "Source Name": "",
+      "Details": "",
+      "Data Models": [
+        {
+          "Model Name": "",
+          "Attributes": ""
+        }
+      ],
+      "Data Access And Security": {
+        "Access Method": "",
+        "Security Measures": ""
+      },
+      "Data Governance": {
+        "Management Strategy": "",
+        "Cleaning Strategy": "",
+        "Consistency Strategy": ""
+      }
+    }
+  ],
+  "Traffic And Load": {
+    "Traffic Type": {
+      "Request Type": "",
+      "Frequency": "",
+      "Peak Times": "",
+      "Performance Requirements": ""
+    },
+    "Load Balancing Strategy": ""
+  },
+  "Deployment Context": {
+    "Deployment Details": {
+      "Location": "",
+      "Cloud Platforms": "",
+      "Containerization Details": "",
+      "CI_CD_Pipeline": ""
+    }
+  },
+  "Fault Tolerance And Recovery": {
+    "Resilience Strategy": "",
+    "Backup Strategy": "",
+    "Recovery Procedure": ""
+  },
+  "Regulatory Compliance": {
+    "Compliance Requirements": ""
+  }
+}

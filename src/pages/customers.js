@@ -1,8 +1,7 @@
-import { useCallback, useState, useEffect, Component } from "react";
+import { useState, useEffect } from "react";
 import Head from "next/head";
 import { Layout as DashboardLayout } from "src/layouts/dashboard/layout";
 import axios from "axios";
-import rdflib from "rdflib";
 import { Typography, Input, Row, Col, Button, Card, Collapse, Form } from "antd";
 
 const { Title } = Typography;
@@ -45,36 +44,176 @@ const Page = () => {
     }
   };
 
+  const handleAddApplicationConsumer = () => {
+    setAppProfile((prevState) => ({
+      ...prevState,
+      "Application Consumers": [
+        ...prevState["Application Consumers"],
+        {
+          "Profile Type": "",
+          Characteristics: "",
+          "Interfaces Experiences": [
+            {
+              "Interface Type": "",
+              Endpoint: "",
+            },
+          ],
+          "Consumer Specific Functionality": "",
+          "Authentication And Authorization": {
+            Method: "",
+            Permissions: "",
+          },
+        },
+      ],
+    }));
+  };
+
+  const handleAddMicroservice = () => {
+    setAppProfile((prevState) => ({
+      ...prevState,
+      Microservices: [
+        ...prevState["Microservices"],
+        {
+          Name: "",
+          Purpose: "",
+          Functionality: "",
+          "API Endpoints": [
+            {
+              Endpoint: "",
+              Purpose: "",
+              Method: "",
+            },
+          ],
+          Dependencies: [
+            {
+              ServiceName: "",
+              Purpose: "",
+            },
+          ],
+          "Resource Requirements": {
+            CPU: "",
+            Memory: "",
+            Storage: "",
+          },
+          "Operational Aspects": {
+            Monitoring: "",
+            Logging: "",
+            "Deployment Scaling Instructions": "",
+          },
+        },
+      ],
+    }));
+  };
+
+  const handleAddDataSource = () => {
+    setAppProfile((prevState) => ({
+      ...prevState,
+      "Data Sources": [
+        ...prevState["Data Sources"],
+        {
+          "Source Name": "",
+          Details: "",
+          "Data Models": [
+            {
+              "Model Name": "",
+              Attributes: "",
+            },
+          ],
+          "Data Access And Security": {
+            "Access Method": "",
+            "Security Measures": "",
+          },
+          "Data Governance": {
+            "Management Strategy": "",
+            "Cleaning Strategy": "",
+            "Consistency Strategy": "",
+          },
+        },
+      ],
+    }));
+  };
+
+  const handleAddTrafficType = () => {
+    setAppProfile((prevState) => ({
+      ...prevState,
+      "Traffic And Load": {
+        ...prevState["Traffic And Load"],
+        "Traffic Type": {
+          "Request Type": "",
+          Frequency: "",
+          "Peak Times": "",
+          "Performance Requirements": "",
+        },
+      },
+    }));
+  };
+
   const renderForm = (data, path = "") => {
     return Object.entries(data).map(([key, value]) => {
       const newPath = path ? `${path}.${key}` : key;
+
       if (Array.isArray(value)) {
-        // If value is an array, we get the first element
-        value = value[0];
+        return (
+          <Collapse key={newPath} bordered={false} defaultActiveKey={[]}>
+            <Panel header={key} key={newPath}>
+              {value.map((item, index) => (
+                <div key={`${newPath}-${index}`}>{renderForm(item, `${newPath}[${index}]`)}</div>
+              ))}
+              {key === "Application Consumers" && (
+                <Button
+                  type="primary"
+                  onClick={handleAddApplicationConsumer}
+                  style={{ marginTop: "20px" }}
+                >
+                  Add New Application Consumer
+                </Button>
+              )}
+              {key === "Microservices" && (
+                <Button
+                  type="primary"
+                  onClick={handleAddMicroservice}
+                  style={{ marginTop: "20px" }}
+                >
+                  Add New Microservice
+                </Button>
+              )}
+              {key === "Data Sources" && (
+                <Button type="primary" onClick={handleAddDataSource} style={{ marginTop: "20px" }}>
+                  Add New Data Source
+                </Button>
+              )}
+              {key === "Traffic And Load" && (
+                <Button type="primary" onClick={handleAddTrafficType} style={{ marginTop: "20px" }}>
+                  Add New Traffic Type
+                </Button>
+              )}
+            </Panel>
+          </Collapse>
+        );
       }
 
       if (typeof value === "object" && !Array.isArray(value)) {
         return (
           <Collapse key={newPath} bordered={false} defaultActiveKey={[]}>
-            <Panel header={key} key="1">
+            <Panel header={key} key={newPath}>
               {renderForm(value, newPath)}
             </Panel>
           </Collapse>
         );
-      } else {
-        return (
-          <Row key={newPath} gutter={[16, 16]}>
-            <Col xs={24} sm={12}>
-              <Title level={5}>{key}</Title>
-            </Col>
-            <Col xs={24} sm={12}>
-              <Form.Item name={newPath}>
-                <TextArea rows={4} />
-              </Form.Item>
-            </Col>
-          </Row>
-        );
       }
+
+      return (
+        <Row key={newPath} gutter={[16, 16]}>
+          <Col xs={24} sm={12}>
+            <Title level={5}>{key}</Title>
+          </Col>
+          <Col xs={24} sm={12}>
+            <Form.Item name={newPath}>
+              <TextArea rows={4} />
+            </Form.Item>
+          </Col>
+        </Row>
+      );
     });
   };
 

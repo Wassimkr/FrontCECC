@@ -1,4 +1,8 @@
 {
+  "Application": {
+    "Name": "",
+    "Description": ""
+  },
   "Application Consumers": [
     {
       "Profile Type": "",
@@ -46,7 +50,7 @@
       }
     }
   ],
-  "DataSources": [
+  "Data Sources": [
     {
       "Source Name": "",
       "Details": "",

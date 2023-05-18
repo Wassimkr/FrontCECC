@@ -3,12 +3,14 @@ import Head from "next/head";
 import { Layout as DashboardLayout } from "src/layouts/dashboard/layout";
 import axios from "axios";
 import rdflib from "rdflib";
-import { Typography, Input, Row, Col, Button, Card } from "antd";
+import { Typography, Input, Row, Col, Button, Card, Collapse, Form } from "antd";
 
 const { Title } = Typography;
 const { TextArea } = Input;
+const { Panel } = Collapse;
 
 const Page = () => {
+  const [form] = Form.useForm();
   const [appProfile, setAppProfile] = useState({});
 
   useEffect(() => {
@@ -43,25 +45,32 @@ const Page = () => {
     }
   };
 
-  const renderForm = (data) => {
+  const renderForm = (data, path = "") => {
     return Object.entries(data).map(([key, value]) => {
-      if (typeof value === "object") {
+      const newPath = path ? `${path}.${key}` : key;
+      if (Array.isArray(value)) {
+        // If value is an array, we get the first element
+        value = value[0];
+      }
+
+      if (typeof value === "object" && !Array.isArray(value)) {
         return (
-          <div key={key} style={{ marginBottom: "16px" }}>
-            <Card variant="outlined">
-              <Title level={4}>{key}</Title>
-              {renderForm(value)}
-            </Card>
-          </div>
+          <Collapse key={newPath} bordered={false} defaultActiveKey={[]}>
+            <Panel header={key} key="1">
+              {renderForm(value, newPath)}
+            </Panel>
+          </Collapse>
         );
       } else {
         return (
-          <Row key={key} gutter={[16, 16]}>
+          <Row key={newPath} gutter={[16, 16]}>
             <Col xs={24} sm={12}>
               <Title level={5}>{key}</Title>
             </Col>
             <Col xs={24} sm={12}>
-              <TextArea rows={4} name={key} value={value} onChange={handleInputChange} />
+              <Form.Item name={newPath}>
+                <TextArea rows={4} />
+              </Form.Item>
             </Col>
           </Row>
         );
@@ -70,15 +79,20 @@ const Page = () => {
   };
 
   return (
-    <div style={{ padding: "20px" }}>
-      <Title level={2}>Application Profile Dashboard</Title>
-      <form onSubmit={handleSubmit}>
-        {renderForm(appProfile)}
-        <Button type="primary" htmlType="submit">
-          Update
-        </Button>
-      </form>
-    </div>
+    <>
+      <Head>
+        <title>Application Profile</title>
+      </Head>
+      <div style={{ padding: "20px" }}>
+        <Title level={2}>Application Profile</Title>
+        <form onSubmit={handleSubmit}>
+          {renderForm(appProfile)}
+          <Button type="primary" htmlType="submit" style={{ marginTop: "20px" }}>
+            Update
+          </Button>
+        </form>
+      </div>
+    </>
   );
 };
 

@@ -37,7 +37,7 @@ const Page = () => {
     event.preventDefault();
 
     try {
-      await axios.post("/api/appProfile", appProfile);
+      await axios.post("/api/application-profiles", appProfile);
       console.log("App profile updated successfully!");
     } catch (error) {
       console.error("Error updating app profile:", error);
@@ -227,7 +227,7 @@ const Page = () => {
         <form onSubmit={handleSubmit}>
           {renderForm(appProfile)}
           <Button type="primary" htmlType="submit" style={{ marginTop: "20px" }}>
-            Update
+            Submit
           </Button>
         </form>
       </div>

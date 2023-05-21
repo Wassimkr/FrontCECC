@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import Head from "next/head";
 import { Layout as DashboardLayout } from "src/layouts/dashboard/layout";
 import axios from "axios";
-import { Typography, Input, Row, Col, Button, Card, Collapse, Form } from "antd";
+import _ from "lodash";
+import { notification, Typography, Input, Row, Col, Button, Card, Collapse, Form } from "antd";
 
 const { Title } = Typography;
 const { TextArea } = Input;
@@ -20,28 +21,47 @@ const Page = () => {
     try {
       const response = await axios.get("/api/appProfile");
       setAppProfile(response.data);
+      form.setFieldsValue(response.data);
     } catch (error) {
       console.error("Error fetching app profile data:", error);
     }
   };
 
-  const handleInputChange = (event) => {
-    const { name, value } = event.target;
-    setAppProfile((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
+  const handleSubmit = async () => {
+    try {
+      const values = form.getFieldsValue();
+      await axios.post("http://localhost:3001/api/application-profiles", values);
+      console.log("App profile updated successfully!");
+
+      notification.success({
+        message: "Success",
+        description: "The application profile has been submitted successfully!",
+      });
+    } catch (error) {
+      console.log(error);
+      console.error("Error updating app profile:", error);
+
+      // Log the error response from the server, if any
+      if (error.response) {
+        console.error("Server responded with:", error.response.data);
+        console.log(error.response);
+      }
+
+      notification.error({
+        message: "Error",
+        description: "There was an error while submitting the application profile.",
+      });
+    }
   };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const handleInputChange = (e, path) => {
+    const { value } = e.target;
 
-    try {
-      await axios.post("/api/application-profiles", appProfile);
-      console.log("App profile updated successfully!");
-    } catch (error) {
-      console.error("Error updating app profile:", error);
-    }
+    setAppProfile((prevState) => {
+      const updatedProfile = _.cloneDeep(prevState);
+      _.set(updatedProfile, path, value);
+      return updatedProfile;
+    });
   };
 
   const handleAddApplicationConsumer = () => {
@@ -209,7 +229,7 @@ const Page = () => {
           </Col>
           <Col xs={24} sm={12}>
             <Form.Item name={newPath}>
-              <TextArea rows={4} />
+              <TextArea rows={4} onChange={(e) => handleInputChange(e, newPath)} />
             </Form.Item>
           </Col>
         </Row>
@@ -224,12 +244,12 @@ const Page = () => {
       </Head>
       <div style={{ padding: "20px" }}>
         <Title level={2}>Application Profile</Title>
-        <form onSubmit={handleSubmit}>
+        <Form form={form} onFinish={handleSubmit}>
           {renderForm(appProfile)}
           <Button type="primary" htmlType="submit" style={{ marginTop: "20px" }}>
             Submit
           </Button>
-        </form>
+        </Form>
       </div>
     </>
   );

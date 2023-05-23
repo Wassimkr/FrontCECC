@@ -63,11 +63,6 @@
       "Data Access And Security": {
         "Access Method": "",
         "Security Measures": ""
-      },
-      "Data Governance": {
-        "Management Strategy": "",
-        "Cleaning Strategy": "",
-        "Consistency Strategy": ""
       }
     }
   ],
@@ -87,13 +82,5 @@
       "Containerization Details": "",
       "CI_CD_Pipeline": ""
     }
-  },
-  "Fault Tolerance And Recovery": {
-    "Resilience Strategy": "",
-    "Backup Strategy": "",
-    "Recovery Procedure": ""
-  },
-  "Regulatory Compliance": {
-    "Compliance Requirements": ""
   }
 }

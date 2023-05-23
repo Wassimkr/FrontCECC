@@ -29,9 +29,9 @@ const Page = () => {
 
   const handleSubmit = async () => {
     try {
-      const values = form.getFieldsValue();
-      await axios.post("http://localhost:3001/api/application-profiles", values);
+      await axios.post("http://localhost:3001/api/application-profiles", appProfile);
       console.log("App profile updated successfully!");
+      console.log(appProfile);
 
       notification.success({
         message: "Success",
@@ -228,7 +228,7 @@ const Page = () => {
             <Title level={5}>{key}</Title>
           </Col>
           <Col xs={24} sm={12}>
-            <Form.Item name={newPath}>
+            <Form.Item>
               <TextArea rows={4} onChange={(e) => handleInputChange(e, newPath)} />
             </Form.Item>
           </Col>

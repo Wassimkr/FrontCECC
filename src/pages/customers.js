@@ -64,6 +64,14 @@ const Page = () => {
     });
   };
 
+  const handleRemove = (key, index) => {
+    setAppProfile((prevState) => {
+      const updatedProfile = _.cloneDeep(prevState);
+      _.pullAt(updatedProfile[key], index);
+      return updatedProfile;
+    });
+  };
+
   const handleAddApplicationConsumer = () => {
     setAppProfile((prevState) => ({
       ...prevState,
@@ -156,15 +164,18 @@ const Page = () => {
   const handleAddTrafficType = () => {
     setAppProfile((prevState) => ({
       ...prevState,
-      "Traffic And Load": {
-        ...prevState["Traffic And Load"],
-        "Traffic Type": {
-          "Request Type": "",
-          Frequency: "",
-          "Peak Times": "",
-          "Performance Requirements": "",
+      "Traffic And Load": [
+        {
+          ...prevState["Traffic And Load"],
+          "Traffic Type": {
+            "Request Type": "",
+            Frequency: "",
+            "Peak Times": "",
+            "Performance Requirements": "",
+          },
+          "Load Balancing Strategy": "",
         },
-      },
+      ],
     }));
   };
 
@@ -176,9 +187,21 @@ const Page = () => {
         return (
           <Collapse key={newPath} bordered={false} defaultActiveKey={[]}>
             <Panel header={key} key={newPath}>
-              {value.map((item, index) => (
-                <div key={`${newPath}-${index}`}>{renderForm(item, `${newPath}[${index}]`)}</div>
-              ))}
+              <Collapse bordered={false} defaultActiveKey={[]}>
+                {value.map((item, index) => (
+                  <Panel header={`${key} ${index + 1}`} key={`${newPath}-${index}`}>
+                    {renderForm(item, `${newPath}[${index}]`)}
+                    <Button
+                      type="primary"
+                      danger
+                      onClick={() => handleRemove(key, index)}
+                      style={{ marginTop: "20px" }}
+                    >
+                      Remove {key} {index + 1}
+                    </Button>
+                  </Panel>
+                ))}
+              </Collapse>
               {key === "Application Consumers" && (
                 <Button
                   type="primary"
@@ -202,9 +225,10 @@ const Page = () => {
                   Add New Data Source
                 </Button>
               )}
+              ,
               {key === "Traffic And Load" && (
                 <Button type="primary" onClick={handleAddTrafficType} style={{ marginTop: "20px" }}>
-                  Add New Traffic Type
+                  Add New Traffic And Load
                 </Button>
               )}
             </Panel>

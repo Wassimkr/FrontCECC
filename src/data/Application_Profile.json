@@ -66,15 +66,17 @@
       }
     }
   ],
-  "Traffic And Load": {
-    "Traffic Type": {
-      "Request Type": "",
-      "Frequency": "",
-      "Peak Times": "",
-      "Performance Requirements": ""
-    },
-    "Load Balancing Strategy": ""
-  },
+  "Traffic And Load": [
+    {
+      "Traffic Type": {
+        "Request Type": "",
+        "Frequency": "",
+        "Peak Times": "",
+        "Performance Requirements": ""
+      },
+      "Load Balancing Strategy": ""
+    }
+  ],
   "Deployment Context": {
     "Deployment Details": {
       "Location": "",

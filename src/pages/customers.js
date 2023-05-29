@@ -3,11 +3,23 @@ import Head from "next/head";
 import { Layout as DashboardLayout } from "src/layouts/dashboard/layout";
 import axios from "axios";
 import _ from "lodash";
-import { notification, Typography, Input, Row, Col, Button, Card, Collapse, Form } from "antd";
+import {
+  notification,
+  Typography,
+  Input,
+  Row,
+  Col,
+  Button,
+  Card,
+  Collapse,
+  Form,
+  Tabs,
+} from "antd";
 
 const { Title } = Typography;
 const { TextArea } = Input;
 const { Panel } = Collapse;
+const { TabPane } = Tabs;
 
 const Page = () => {
   const [form] = Form.useForm();
@@ -64,124 +76,133 @@ const Page = () => {
     });
   };
 
-  const handleRemove = (key, index) => {
+  const handleRemove = (path, index) => {
     setAppProfile((prevState) => {
       const updatedProfile = _.cloneDeep(prevState);
-      _.pullAt(updatedProfile[key], index);
+      const arrayOrObjectToModify = _.get(updatedProfile, path);
+      if (Array.isArray(arrayOrObjectToModify)) {
+        _.pullAt(arrayOrObjectToModify, index);
+      } else if (typeof arrayOrObjectToModify === "object") {
+        delete arrayOrObjectToModify[index];
+      }
       return updatedProfile;
     });
   };
 
-  const handleAddApplicationConsumer = () => {
-    setAppProfile((prevState) => ({
-      ...prevState,
-      "Application Consumers": [
-        ...prevState["Application Consumers"],
-        {
-          "Profile Type": "",
-          Characteristics: "",
-          "Interfaces Experiences": [
-            {
+  const handleAddArrayElement = (path) => {
+    setAppProfile((prevState) => {
+      const updatedProfile = _.cloneDeep(prevState);
+      const arrayToModify = _.get(updatedProfile, path, []);
+      if (Array.isArray(arrayToModify)) {
+        let newElement = {};
+        switch (path) {
+          case "Application Consumers":
+            newElement = {
+              "Profile Type": "",
+              Characteristics: "",
+              "Interfaces Experiences": [
+                {
+                  "Interface Type": "",
+                  Endpoint: "",
+                },
+              ],
+              "Consumer Specific Functionality": "",
+              "Authentication And Authorization": [
+                {
+                  Method: "",
+                  Permissions: "",
+                },
+              ],
+            };
+            break;
+          case "Microservices":
+            newElement = {
+              Name: "",
+              Purpose: "",
+              Functionality: "",
+              "API Endpoints": [
+                {
+                  Endpoint: "",
+                  Purpose: "",
+                  Method: "",
+                },
+              ],
+              Dependencies: [
+                {
+                  ServiceName: "",
+                  Purpose: "",
+                },
+              ],
+              "Resource Requirements": {
+                CPU: "",
+                Memory: "",
+                Storage: "",
+              },
+              "Operational Aspects": {
+                Monitoring: "",
+                Logging: "",
+                "Deployment Scaling Instructions": "",
+              },
+            };
+            break;
+          case "Data Sources":
+            newElement = {
+              "Source Name": "",
+              Details: "",
+              "Data Models": [
+                {
+                  "Model Name": "",
+                  Attributes: "",
+                },
+              ],
+              "Data Access And Security": {
+                "Access Method": "",
+                "Security Measures": "",
+              },
+              "Data Governance": {
+                "Management Strategy": "",
+                "Cleaning Strategy": "",
+                "Consistency Strategy": "",
+              },
+            };
+            break;
+          case "Traffic And Load":
+            newElement = {
+              "Traffic Type": {
+                "Request Type": "",
+                Frequency: "",
+                "Peak Times": "",
+                "Performance Requirements": "",
+              },
+              "Load Balancing Strategy": "",
+            };
+            break;
+          default:
+            newElement = {
               "Interface Type": "",
               Endpoint: "",
-            },
-          ],
-          "Consumer Specific Functionality": "",
-          "Authentication And Authorization": {
-            Method: "",
-            Permissions: "",
-          },
-        },
-      ],
-    }));
-  };
-
-  const handleAddMicroservice = () => {
-    setAppProfile((prevState) => ({
-      ...prevState,
-      Microservices: [
-        ...prevState["Microservices"],
-        {
-          Name: "",
-          Purpose: "",
-          Functionality: "",
-          "API Endpoints": [
-            {
-              Endpoint: "",
-              Purpose: "",
-              Method: "",
-            },
-          ],
-          Dependencies: [
-            {
-              ServiceName: "",
-              Purpose: "",
-            },
-          ],
-          "Resource Requirements": {
-            CPU: "",
-            Memory: "",
-            Storage: "",
-          },
-          "Operational Aspects": {
-            Monitoring: "",
-            Logging: "",
-            "Deployment Scaling Instructions": "",
-          },
-        },
-      ],
-    }));
-  };
-
-  const handleAddDataSource = () => {
-    setAppProfile((prevState) => ({
-      ...prevState,
-      "Data Sources": [
-        ...prevState["Data Sources"],
-        {
-          "Source Name": "",
-          Details: "",
-          "Data Models": [
-            {
-              "Model Name": "",
-              Attributes: "",
-            },
-          ],
-          "Data Access And Security": {
-            "Access Method": "",
-            "Security Measures": "",
-          },
-          "Data Governance": {
-            "Management Strategy": "",
-            "Cleaning Strategy": "",
-            "Consistency Strategy": "",
-          },
-        },
-      ],
-    }));
-  };
-
-  const handleAddTrafficType = () => {
-    setAppProfile((prevState) => ({
-      ...prevState,
-      "Traffic And Load": [
-        {
-          ...prevState["Traffic And Load"],
-          "Traffic Type": {
-            "Request Type": "",
-            Frequency: "",
-            "Peak Times": "",
-            "Performance Requirements": "",
-          },
-          "Load Balancing Strategy": "",
-        },
-      ],
-    }));
+            };
+            break;
+        }
+        arrayToModify.push(newElement);
+        _.set(updatedProfile, path, arrayToModify);
+      }
+      return updatedProfile;
+    });
   };
 
   const renderForm = (data, path = "") => {
     return Object.entries(data).map(([key, value]) => {
       const newPath = path ? `${path}.${key}` : key;
+
+      const addRemoveButtonKeys = [
+        "Application Consumers",
+        "Microservices",
+        "Data Sources",
+        "Traffic And Load",
+      ];
+
+      const isArrayParent = addRemoveButtonKeys.includes(key);
 
       if (Array.isArray(value)) {
         return (
@@ -189,12 +210,12 @@ const Page = () => {
             <Panel header={key} key={newPath}>
               <Collapse bordered={false} defaultActiveKey={[]}>
                 {value.map((item, index) => (
-                  <Panel header={`${key} ${index + 1}`} key={`${newPath}-${index}`}>
+                  <Panel header={`${key} ${index + 1}`} key={`${newPath}.${index}`}>
                     {renderForm(item, `${newPath}[${index}]`)}
                     <Button
                       type="primary"
                       danger
-                      onClick={() => handleRemove(key, index)}
+                      onClick={() => handleRemove(newPath, index)}
                       style={{ marginTop: "20px" }}
                     >
                       Remove {key} {index + 1}
@@ -202,33 +223,13 @@ const Page = () => {
                   </Panel>
                 ))}
               </Collapse>
-              {key === "Application Consumers" && (
+              {isArrayParent && (
                 <Button
                   type="primary"
-                  onClick={handleAddApplicationConsumer}
+                  onClick={() => handleAddArrayElement(newPath.split(".").slice(0, -1).join("."))}
                   style={{ marginTop: "20px" }}
                 >
-                  Add New Application Consumer
-                </Button>
-              )}
-              {key === "Microservices" && (
-                <Button
-                  type="primary"
-                  onClick={handleAddMicroservice}
-                  style={{ marginTop: "20px" }}
-                >
-                  Add New Microservice
-                </Button>
-              )}
-              {key === "Data Sources" && (
-                <Button type="primary" onClick={handleAddDataSource} style={{ marginTop: "20px" }}>
-                  Add New Data Source
-                </Button>
-              )}
-              ,
-              {key === "Traffic And Load" && (
-                <Button type="primary" onClick={handleAddTrafficType} style={{ marginTop: "20px" }}>
-                  Add New Traffic And Load
+                  Add New {key}
                 </Button>
               )}
             </Panel>
@@ -241,6 +242,16 @@ const Page = () => {
           <Collapse key={newPath} bordered={false} defaultActiveKey={[]}>
             <Panel header={key} key={newPath}>
               {renderForm(value, newPath)}
+              {isArrayParent && (
+                <Button
+                  type="primary"
+                  danger
+                  onClick={() => handleRemove(path, outerIndex)}
+                  style={{ marginTop: "20px" }}
+                >
+                  Remove {key}
+                </Button>
+              )}
             </Panel>
           </Collapse>
         );
@@ -269,7 +280,42 @@ const Page = () => {
       <div style={{ padding: "20px" }}>
         <Title level={2}>Application Profile</Title>
         <Form form={form} onFinish={handleSubmit}>
-          {renderForm(appProfile)}
+          <Tabs type="card">
+            <TabPane tab="Application" key="1">
+              {renderForm({ Application: appProfile["Application"] || {} })}
+            </TabPane>
+            <TabPane tab="Application Consumers" key="2">
+              {renderForm(
+                { "Application Consumers": appProfile["Application Consumers"] || [] },
+                "Application Consumers",
+                true
+              )}
+            </TabPane>
+            <TabPane tab="Microservices" key="3">
+              {renderForm(
+                { Microservices: appProfile["Microservices"] || [] },
+                "Microservices",
+                true
+              )}
+            </TabPane>
+            <TabPane tab="Data Sources" key="4">
+              {renderForm(
+                { "Data Sources": appProfile["Data Sources"] || [] },
+                "Data Sources",
+                true
+              )}
+            </TabPane>
+            <TabPane tab="Traffic And Load" key="5">
+              {renderForm(
+                { "Traffic And Load": appProfile["Traffic And Load"] || [] },
+                "Traffic And Load",
+                true
+              )}
+            </TabPane>
+            <TabPane tab="Deployment Context" key="6">
+              {renderForm({ "Deployment Context": appProfile["Deployment Context"] || {} })}
+            </TabPane>
+          </Tabs>
           <Button type="primary" htmlType="submit" style={{ marginTop: "20px" }}>
             Submit
           </Button>

@@ -14,10 +14,12 @@
         }
       ],
       "Consumer Specific Functionality": "",
-      "Authentication And Authorization": {
-        "Method": "",
-        "Permissions": ""
-      }
+      "Authentication And Authorization": [
+        {
+          "Method": "",
+          "Permissions": ""
+        }
+      ]
     }
   ],
   "Microservices": [
@@ -78,11 +80,9 @@
     }
   ],
   "Deployment Context": {
-    "Deployment Details": {
-      "Location": "",
-      "Cloud Platforms": "",
-      "Containerization Details": "",
-      "CI_CD_Pipeline": ""
-    }
+    "Location": "",
+    "Cloud Platforms": "",
+    "Containerization Details": "",
+    "CI_CD_Pipeline": ""
   }
 }
